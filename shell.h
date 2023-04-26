@@ -1,5 +1,5 @@
-#ifndef _SHELL_H
-#define _SHELL_H
+#ifndef _SHELL_H_
+#define _SHELL_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include <fcntlh>
+#include <fcntl.h>
 #include <errno.h>
 
 #define READ_BUF_SIZE 1024
@@ -35,7 +35,7 @@ extern char **environ;
 
 /**
  * struct liststr - singly linked list
- * @num: the field that contains number
+ * @num: field containing number
  * @str: a string
  * @next: next node
  */
@@ -47,22 +47,22 @@ typedef struct liststr
 } list_t;
 
 /**
- * struct passinfo - contains arguements to pass into a function
- * @arg: a string from getline containing arguements
- * @argv:an array of strings generated from arg
- * @path: path for the current command
+ * struct passinfo - contains arguements
+ * @arg: string containing arguments
+ * @argv:an array of strings from arg
+ * @path: a string path
  * @argc: the argument count
  * @line_count: the error count
  * @err_num: the error code for exit()s
- * @linecount_flag: line of input
- * @fname: program filename
- * @env: copy of environ
- * @environ: modified copy of environ from LL env
+ * @linecount_flag: if on count this line of input
+ * @fname: filename
+ * @env: linked list local copy of environ
+ * @environ: modified copy of environ
  * @history: the history node
  * @alias: the alias node
  * @env_changed: on if environ was changed
  * @status: the return status of the last executed command
- * @cmd_buf: address of pointer to cmd_buf
+ * @cmd_buf: address of pointer to cmd_buf, on if chaining
  * @cmd_buf_type: CMD_type ||, &&, ;
  * @readfd: the fd from which to read line input
  * @histcount: the history line number count
@@ -84,8 +84,8 @@ typedef struct passinfo
 	int env_changed;
 	int status;
 
-	char **cmd_buf; /* pointer to cmd ; chain buffer, for memory mangement */
-	int cmd_buf_type; /* CMD_type ||, &&, ; */
+	char **cmd_buf;
+	int cmd_buf_type;
 	int readfd;
 	int histcount;
 } info_t;
@@ -106,12 +106,12 @@ typedef struct builtin
 } builtin_table;
 
 
-int hsh(info_t *, char **);
-int find_builtin(info_t *);
-void find_cmd(info_t *);
-void fork_cmd(info_t *);
-int is_cmd(info_t *, char *);
-char *dup_chars(char *, int, int);
+int hash(info_t *, char **);
+int builtin_find(info_t *);
+void find_command(info_t *);
+void fork_command(info_t *);
+int is_exec(info_t *, char *);
+char *char_dupl(char *, int, int);
 char *find_path(info_t *, char *, char *);
 int loophsh(char **);
 void _eputs(char *);
@@ -120,21 +120,21 @@ int _putfd(char c, int fd);
 int _putsfd(char *str, int fd);
 int _strlen(char *);
 int _strcmp(char *, char *);
-char *starts_with(const char *, const char *);
+char *start_with(const char *, const char *);
 char *_strcat(char *, char *);
 char *_strcpy(char *, char *);
-char *_strdup(const char *);
+char *_strdup(char *);
 void _puts(char *);
 int _putchar(char);
 char *_strncpy(char *, char *, int);
 char *_strncat(char *, char *, int);
 char *_strchr(char *, char);
-char **strtow(char *, char *);
-char **strtow2(char *, char);
-char *_memset(char *, char, unsigned int);
-void ffree(char **);
-void *_realloc(void *, unsigned int, unsigned int);
-int bfree(void **);
+char **str_to_word(char *, char *);
+char **str_to_word2(char *, char);
+char *_memset(char *, char, int);
+void free_f(char **);
+void *_relloc(void *, int, int);
+int free_p(void **);
 int interactive(info_t *);
 int is_delim(char, char *);
 int _isalpha(int);
@@ -168,21 +168,20 @@ int write_history(info_t *info);
 int read_history(info_t *info);
 int build_history_list(info_t *info, char *buf, int linecount);
 int renumber_history(info_t *info);
-list_t *add_node(list_t **, const char *, int);
-list_t *add_node_end(list_t **, const char *, int);
-size_t print_list_str(const list_t *);
-int delete_node_at_index(list_t **, unsigned int);
-void free_list(list_t **);
-size_t list_len(const list_t *);
-char **list_to_strings(list_t *);
-size_t print_list(const list_t *);
-list_t *node_starts_with(list_t *, char *, char);
-ssize_t get_node_index(list_t *, list_t *);
-int is_chain(info_t *, char *, size_t *);
-void check_chain(info_t *, char *, size_t *, size_t, size_t);
-int replace_alias(info_t *);
-int replace_vars(info_t *);
-int replace_string(char **, char *);
+list_t *node_add_start(list_t **, const char *, int);
+list_t *node_add_end(list_t **, const char *, int);
+size_t str_print_list(const list_t *);
+int delete_at_index(list_t **, int);
+void list_free(list_t **);
+size_t list_length(const list_t *);
+char **convert_list_to_strings(list_t *);
+size_t list_printout(const list_t *);
+list_t *nodestrts_with(list_t *, char *, char);
+ssize_t node_index(list_t *, list_t *);
+int chain(info_t *, char *, size_t *);
+void chain_checking(info_t *, char *, size_t *, size_t, size_t);
+int replacing_alias(info_t *);
+int variable_replacing(info_t *);
+int string_replacing(char **, char *);
 
 #endif
-
