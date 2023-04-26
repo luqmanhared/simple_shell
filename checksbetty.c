@@ -7,6 +7,6 @@
  */
 int main(void)
 {
-printf("Welcome to my program!\n");
+printf("Welcome to our shell project!\n");
 return (0);
 }
