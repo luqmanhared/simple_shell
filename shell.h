@@ -9,7 +9,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <limits.h>
-#include <fcntlh>
+#include <fcntl.h>
 #include <errno.h>
 
 #define READ_BUF_SIZE 1024
