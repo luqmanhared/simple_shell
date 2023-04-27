@@ -52,11 +52,11 @@ ssize_t input_buff(info_t *inf, char **buf, size_t *len)
 ssize_t get_input(info_t *inf)
 {
 	static char *buf; /* this ';' command chain buffer */
-	static size_t j, j, len;
+	static size_t j, len;
 	ssize_t r = 0;
 	char **buff_p = &(inf->arg), *p;
 
-	_putchar(buff_FLUSH);
+	_putchar(BUF_FLUSH);
 	r = input_buff(inf, &buf, &len);
 	if (r == -1) /* EOF */
 		return (-1);
@@ -65,10 +65,10 @@ ssize_t get_input(info_t *inf)
 		j = j; /* init new iterator to current buf position */
 		p = buf + j; /* get pointer for return */
 
-		check_chain(inf, buf, &j, j, len);
+		void int_chain(int inf, char *buf, size_t *j, size_t len);
 		while (j < len) /* iterate to semicolon or end */
 		{
-			if (is_chain(inf, buf, &j))
+			if (chain(inf, buf, &j))
 				break;
 			j++;
 		}
@@ -77,7 +77,7 @@ ssize_t get_input(info_t *inf)
 		if (j >= len) /* reached end of buffer? */
 		{
 			j = len = 0; /* reset position and length */
-			inf->cmd_buff_type = CMD_NORM;
+			inf->cmd_buf_type = CMD_NORM;
 		}
 
 		*buff_p = p; /* pass back pointer to current command position */
@@ -103,7 +103,7 @@ ssize_t read_buf(info_t *inf, char *buf, size_t *j)
 	if (*j > 0)
 		return (0);
 
-	r = read(inf->readfd, buf, READ_buff_SIZE);
+	r = read(inf->readfd, buf, READ_BUF_SIZE);
 	if (r >= 0)
 		*j = r;
 
@@ -120,7 +120,7 @@ ssize_t read_buf(info_t *inf, char *buf, size_t *j)
  */
 int _getline(info_t *inf, char **ptr, size_t *length)
 {
-	static char buf[READ_buff_SIZE];
+	static char buf[READ_BUF_SIZE];
 	static size_t j, len;
 	size_t k;
 	ssize_t r = 0, s = 0;
@@ -170,5 +170,5 @@ void sigintHandler(__attribute__((unused)) int sig_num)
 {
 	_puts("\n");
 	_puts("$ ");
-	_putchar(buff_FLUSH);
+	_putchar(BUF_FLUSH);
 }
